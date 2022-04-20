@@ -14,7 +14,7 @@ def gen_teams():
     else:
         teamA = results[id][0][0]
         teamB = results[id][0][1]
-    #width so endloss fucky aber prevents wrapping i guess
+    #width so endloss fucky aber prevents wrapping i guess. Alt: Fixed length und max length names
     player11.config(text = teamA[0], width = len(teamA[0])*8, anchor = "e")
     player12.config(text = teamA[1], width = len(teamA[1])*8, anchor = "e")
     player13.config(text = teamA[2], width = len(teamA[2])*8, anchor = "e")
@@ -25,6 +25,19 @@ def gen_teams():
     player23.config(text = teamB[2], width = len(teamB[2])*8, anchor = "e")
     player24.config(text = teamB[3], width = len(teamB[3])*8, anchor = "e")
     player25.config(text = teamB[4], width = len(teamB[4])*8, anchor = "e")
+    scoreA= 0
+    scoreB= 0
+    for member in teamA:
+        scoreA += int(players_dict[member])
+    for member in teamB:
+        scoreB += int(players_dict[member])
+    teamA_mmr.config(text=str(scoreA), width = 40)
+    teamB_mmr.config(text=str(scoreB), width = 40)
+    diff = scoreA - scoreB
+    mmr_diff.config(text=str(abs(diff)))
+    mmr_diff.config(bg="red") if diff>0 else mmr_diff.config(bg="green")
+
+
 
 def fill_box(value):
     set_shuffled_off()
@@ -156,33 +169,30 @@ with open(filename, mode ='r')as file:
 
 PLAYERS = list(players_dict.keys())
 
-
+#create window
 win = tkinter.Tk()
 Rwidth = 800
 Rheight = 640
 win.geometry(str(Rwidth) + "x" + str(Rheight))
 win.title("MMR Shuffler")
-win.columnconfigure(0,minsize=200)
+win.columnconfigure(0,minsize=250)
 
-frame1 = Frame(win) #Teams
+frame1 = Frame(win) #Players
 frame3 = Frame(win) #Dropdown
 frame4 = Frame(win) #Buttons
 frame5 = Frame(win) #Proposed Teams
 frame6 = Frame(win) #StatusFrame
 
 
-#frame4.config(bg="red")
 frame5.columnconfigure(1,minsize=150)
 frame5.columnconfigure(3,minsize=150)
-
-#frame5.config(relief=RAISED)
+frame5.config(bd=1,relief = RIDGE)
 
 frame3.grid(row=0, column=0)
 frame1.grid(row=0, column=1)
-frame4.grid(row=1, column=0, stick ="s")
-frame5.grid(row=2, column=1)
-#frame6.grid(row=1, column=1, sticky="se")
-frame6.grid(row=3, column = 0)
+frame4.grid(row=1, column=0)
+frame5.grid(row=3, column=1)
+frame6.grid(row=3, column = 0, pady=20)
 
 
 
@@ -195,13 +205,29 @@ status = Message(frame6, text = "Not Shuffled")
 status.config(bg="red", fg="white", width="300")
 status.pack()
 
+mmr_msg = Message(frame5, text ="Total MMR: ")
+mmr_msg.config(bd=1, relief=RAISED)
+mmr_msg.grid(row=6, column=0)
+
 teamAname = Message(frame5,text="Team A")
 teamAname.config(bg="red", fg="white", width="300")
 teamAname.grid(row=0, column=1)
 
+teamA_mmr = Message(frame5,text="Team A MMR")
+teamA_mmr.config(bg="red", fg="white", width="300")
+teamA_mmr.grid(row=6, column=1)
+
 teamBname = Message(frame5,text="Team B")
 teamBname.config(bg="green", fg="white", width="300")
 teamBname.grid(row=0, column=3)
+
+teamB_mmr = Message(frame5,text="Team B MMR")
+teamB_mmr.config(bg="green", fg="white", width="300")
+teamB_mmr.grid(row=6, column=3)
+
+mmr_diff = Message(frame5,text="Diff")
+#mmr_diff.config(bg="green", fg="white", width="300")
+mmr_diff.grid(row=6, column=2)
 
 player11 = Message(frame5)
 player12 = Message(frame5)
