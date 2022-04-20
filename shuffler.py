@@ -14,19 +14,20 @@ def gen_teams():
     else:
         teamA = results[id][0][0]
         teamB = results[id][0][1]
-    player11.config(text = teamA[0])
-    player12.config(text = teamA[1])
-    player13.config(text = teamA[2])
-    player14.config(text = teamA[3])
-    player15.config(text = teamA[4])
-    player21.config(text = teamB[0])
-    player22.config(text = teamB[1])
-    player23.config(text = teamB[2])
-    player24.config(text = teamB[3])
-    player25.config(text = teamB[4])
+    #width so endloss fucky aber prevents wrapping i guess
+    player11.config(text = teamA[0], width = len(teamA[0])*8, anchor = "e")
+    player12.config(text = teamA[1], width = len(teamA[1])*8, anchor = "e")
+    player13.config(text = teamA[2], width = len(teamA[2])*8, anchor = "e")
+    player14.config(text = teamA[3], width = len(teamA[3])*8, anchor = "e")
+    player15.config(text = teamA[4], width = len(teamA[4])*8, anchor = "e")
+    player21.config(text = teamB[0], width = len(teamB[0])*8, anchor = "e")
+    player22.config(text = teamB[1], width = len(teamB[1])*8, anchor = "e")
+    player23.config(text = teamB[2], width = len(teamB[2])*8, anchor = "e")
+    player24.config(text = teamB[3], width = len(teamB[3])*8, anchor = "e")
+    player25.config(text = teamB[4], width = len(teamB[4])*8, anchor = "e")
 
 def fill_box(value):
-    status.config(bg="red", fg="white", text="Not shuffled")
+    set_shuffled_off()
     p_value = value
     if not player0.get():
         player0mmr.delete(0,END)
@@ -138,10 +139,12 @@ def average_shuffle():
         if idx > 10:
             break
 
+    set_shuffled_on()
+
+def set_shuffled_off():
+    status.config(bg="red", fg="white", text="Not Shuffled")
+def set_shuffled_on():
     status.config(bg="green", fg="white", text="Shuffled")
-
-
-
 #load csv
 filename = 'players.csv'
 players_dict = {}
@@ -167,13 +170,19 @@ frame4 = Frame(win) #Buttons
 frame5 = Frame(win) #Proposed Teams
 frame6 = Frame(win) #StatusFrame
 
-frame5.columnconfigure(0,minsize=300)
+
+#frame4.config(bg="red")
+frame5.columnconfigure(1,minsize=150)
+frame5.columnconfigure(3,minsize=150)
+
+#frame5.config(relief=RAISED)
 
 frame3.grid(row=0, column=0)
 frame1.grid(row=0, column=1)
-frame4.grid(row=1, column=0)
+frame4.grid(row=1, column=0, stick ="s")
 frame5.grid(row=2, column=1)
-frame6.grid(row=1, column=1, sticky="se")
+#frame6.grid(row=1, column=1, sticky="se")
+frame6.grid(row=3, column = 0)
 
 
 
@@ -188,11 +197,11 @@ status.pack()
 
 teamAname = Message(frame5,text="Team A")
 teamAname.config(bg="red", fg="white", width="300")
-teamAname.grid(row=0, column=0, columnspan=2)
+teamAname.grid(row=0, column=1)
 
 teamBname = Message(frame5,text="Team B")
 teamBname.config(bg="green", fg="white", width="300")
-teamBname.grid(row=0, column=2, columnspan=2)
+teamBname.grid(row=0, column=3)
 
 player11 = Message(frame5)
 player12 = Message(frame5)
@@ -205,16 +214,16 @@ player23 = Message(frame5)
 player24 = Message(frame5)
 player25 = Message(frame5)
 
-player11.grid(row=1)
-player12.grid(row=2)
-player13.grid(row=3)
-player14.grid(row=4)
-player15.grid(row=5)
-player21.grid(row=1, column=2)
-player22.grid(row=2, column=2)
-player23.grid(row=3, column=2)
-player24.grid(row=4, column=2)
-player25.grid(row=5, column=2)
+player11.grid(row=1, column=1)
+player12.grid(row=2, column=1)
+player13.grid(row=3, column=1)
+player14.grid(row=4, column=1)
+player15.grid(row=5, column=1)
+player21.grid(row=1, column=3)
+player22.grid(row=2, column=3)
+player23.grid(row=3, column=3)
+player24.grid(row=4, column=3)
+player25.grid(row=5, column=3)
 
 
 Label(frame3,text="Add player: ").grid(row=0, column=1, columnspan=2)
@@ -277,14 +286,15 @@ player8mmr.grid(row=8, column=2)
 player9mmr.grid(row=9, column=2)
 
 shuffle_btn = Button(frame4, text = 'Average MMR Shuffle', command=average_shuffle)
-shuffle_btn.pack()
+shuffle_btn.pack(side = BOTTOM)
 
-results_sb = Listbox(win)
-results_sb.grid(row=2, column=0, pady = 50)
+results_sb = Listbox(frame6)
+#results_sb.grid(row=2, column=0, pady = 50)
+results_sb.pack()
 
-show_results = Button(win, text="Generate Teams", command = gen_teams)
-show_results.grid(row=3, column=0)
-
+show_results = Button(frame6, text="Generate Teams", command = gen_teams)
+#show_results.grid(row=3, column=0)
+show_results.pack()
 btn2 = Button(frame4, text = 'Dummy Button')
-btn2.pack()
+btn2.pack(side = BOTTOM)
 win.mainloop()
