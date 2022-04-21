@@ -6,12 +6,13 @@ import re
 #globals
 
 global results
+results = {}
 global players_dict
 
 def update_team(player_msg, team):
     i = 0
     for p in player_msg:
-        p.config(text = team[i], width = len(team[i])*8)
+        p.config(text = team[i], width = 300, padx=30)
         i+=1
 
 def reset_all():
@@ -94,7 +95,6 @@ def fill_box(value):
 
 def average_shuffle():
     active_players = [player0.get(), player1.get(), player2.get(), player3.get(), player4.get(), player5.get(), player6.get(), player7.get(), player8.get(), player9.get()]
-    results = {}
     teamA = []
     teamB_roster = []
     teamA.append(active_players[0])
@@ -172,9 +172,9 @@ def load_db():
         for lines in csvFile:
                 players_dict[lines['Alias']] = lines['MMR']
     PLAYERS = list(players_dict.keys())
-    return PLAYERS
+    return PLAYERS, players_dict
 
-PLAYERS = load_db()
+PLAYERS,players_dict = load_db()
 #create window
 win = tkinter.Tk()
 Rwidth = 800
