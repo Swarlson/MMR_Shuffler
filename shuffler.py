@@ -2,6 +2,9 @@ import tkinter.messagebox
 from tkinter import *
 import csv
 import re
+
+def reset_all():
+    pass
 def gen_teams():
     teamA = []
     teamB = []
@@ -14,19 +17,35 @@ def gen_teams():
     else:
         teamA = results[id][0][0]
         teamB = results[id][0][1]
-    player11.config(text = teamA[0])
-    player12.config(text = teamA[1])
-    player13.config(text = teamA[2])
-    player14.config(text = teamA[3])
-    player15.config(text = teamA[4])
-    player21.config(text = teamB[0])
-    player22.config(text = teamB[1])
-    player23.config(text = teamB[2])
-    player24.config(text = teamB[3])
-    player25.config(text = teamB[4])
+    #width so endloss fucky aber prevents wrapping i guess. Alt: Fixed length und max length names
+    player11.config(text = teamA[0], width = len(teamA[0])*8, anchor = "e")
+    player12.config(text = teamA[1], width = len(teamA[1])*8, anchor = "e")
+    player13.config(text = teamA[2], width = len(teamA[2])*8, anchor = "e")
+    player14.config(text = teamA[3], width = len(teamA[3])*8, anchor = "e")
+    player15.config(text = teamA[4], width = len(teamA[4])*8, anchor = "e")
+    player21.config(text = teamB[0], width = len(teamB[0])*8, anchor = "e")
+    player22.config(text = teamB[1], width = len(teamB[1])*8, anchor = "e")
+    player23.config(text = teamB[2], width = len(teamB[2])*8, anchor = "e")
+    player24.config(text = teamB[3], width = len(teamB[3])*8, anchor = "e")
+    player25.config(text = teamB[4], width = len(teamB[4])*8, anchor = "e")
+    scoreA= 0
+    scoreB= 0
+    for member in teamA:
+        scoreA += int(players_dict[member])
+    for member in teamB:
+        scoreB += int(players_dict[member])
+    scoreA = int(scoreA/5)
+    scoreB = int(scoreB/5)
+    teamA_mmr.config(text=str(scoreA), width = 40)
+    teamB_mmr.config(text=str(scoreB), width = 40)
+    diff = scoreA - scoreB
+    mmr_diff.config(text=str(abs(diff)))
+    mmr_diff.config(bg="red") if diff>0 else mmr_diff.config(bg="green")
+
+
 
 def fill_box(value):
-    status.config(bg="red", fg="white", text="Not shuffled")
+    set_shuffled_off()
     p_value = value
     if not player0.get():
         player0mmr.delete(0,END)
@@ -138,10 +157,25 @@ def average_shuffle():
         if idx > 10:
             break
 
+    set_shuffled_on()
+
+def set_shuffled_off():
+    status.config(bg="red", fg="white", text="Not Shuffled")
+def set_shuffled_on():
     status.config(bg="green", fg="white", text="Shuffled")
 
-
-
+def A_Won():
+    player11.config(bg="orange")
+    player12.config(bg="orange")
+    player13.config(bg="orange")
+    player14.config(bg="orange")
+    player15.config(bg="orange")
+def B_Won():
+    player21.config(bg="orange")
+    player22.config(bg="orange")
+    player23.config(bg="orange")
+    player24.config(bg="orange")
+    player25.config(bg="orange")
 #load csv
 filename = 'players.csv'
 players_dict = {}
@@ -153,27 +187,33 @@ with open(filename, mode ='r')as file:
 
 PLAYERS = list(players_dict.keys())
 
-
+#create window
 win = tkinter.Tk()
 Rwidth = 800
 Rheight = 640
 win.geometry(str(Rwidth) + "x" + str(Rheight))
 win.title("MMR Shuffler")
-win.columnconfigure(0,minsize=200)
+win.columnconfigure(0,minsize=250)
 
-frame1 = Frame(win) #Teams
+frame1 = Frame(win) #Players
+frame2 = Frame(win) #Results
 frame3 = Frame(win) #Dropdown
 frame4 = Frame(win) #Buttons
 frame5 = Frame(win) #Proposed Teams
 frame6 = Frame(win) #StatusFrame
 
-frame5.columnconfigure(0,minsize=300)
+
+
+frame5.columnconfigure(1,minsize=150)
+frame5.columnconfigure(3,minsize=150)
+frame5.config(bd=1,relief = RIDGE)
 
 frame3.grid(row=0, column=0)
 frame1.grid(row=0, column=1)
 frame4.grid(row=1, column=0)
-frame5.grid(row=2, column=1)
-frame6.grid(row=1, column=1, sticky="se")
+frame5.grid(row=3, column=1)
+frame6.grid(row=3, column = 0, pady=20)
+frame2.grid(row=4, column=1)
 
 
 
@@ -186,13 +226,29 @@ status = Message(frame6, text = "Not Shuffled")
 status.config(bg="red", fg="white", width="300")
 status.pack()
 
+mmr_msg = Message(frame5, text ="Average MMR: ")
+mmr_msg.config(bd=1, relief=RAISED)
+mmr_msg.grid(row=6, column=0)
+
 teamAname = Message(frame5,text="Team A")
 teamAname.config(bg="red", fg="white", width="300")
-teamAname.grid(row=0, column=0, columnspan=2)
+teamAname.grid(row=0, column=1)
+
+teamA_mmr = Message(frame5,text="Team A MMR")
+teamA_mmr.config(bg="red", fg="white", width="300")
+teamA_mmr.grid(row=6, column=1)
 
 teamBname = Message(frame5,text="Team B")
 teamBname.config(bg="green", fg="white", width="300")
-teamBname.grid(row=0, column=2, columnspan=2)
+teamBname.grid(row=0, column=3)
+
+teamB_mmr = Message(frame5,text="Team B MMR")
+teamB_mmr.config(bg="green", fg="white", width="300")
+teamB_mmr.grid(row=6, column=3)
+
+mmr_diff = Message(frame5,text="Diff")
+#mmr_diff.config(bg="green", fg="white", width="300")
+mmr_diff.grid(row=6, column=2)
 
 player11 = Message(frame5)
 player12 = Message(frame5)
@@ -205,16 +261,16 @@ player23 = Message(frame5)
 player24 = Message(frame5)
 player25 = Message(frame5)
 
-player11.grid(row=1)
-player12.grid(row=2)
-player13.grid(row=3)
-player14.grid(row=4)
-player15.grid(row=5)
-player21.grid(row=1, column=2)
-player22.grid(row=2, column=2)
-player23.grid(row=3, column=2)
-player24.grid(row=4, column=2)
-player25.grid(row=5, column=2)
+player11.grid(row=1, column=1)
+player12.grid(row=2, column=1)
+player13.grid(row=3, column=1)
+player14.grid(row=4, column=1)
+player15.grid(row=5, column=1)
+player21.grid(row=1, column=3)
+player22.grid(row=2, column=3)
+player23.grid(row=3, column=3)
+player24.grid(row=4, column=3)
+player25.grid(row=5, column=3)
 
 
 Label(frame3,text="Add player: ").grid(row=0, column=1, columnspan=2)
@@ -277,14 +333,24 @@ player8mmr.grid(row=8, column=2)
 player9mmr.grid(row=9, column=2)
 
 shuffle_btn = Button(frame4, text = 'Average MMR Shuffle', command=average_shuffle)
-shuffle_btn.pack()
+shuffle_btn.pack(side = BOTTOM)
 
-results_sb = Listbox(win)
-results_sb.grid(row=2, column=0, pady = 50)
+results_sb = Listbox(frame6)
+results_sb.pack()
 
-show_results = Button(win, text="Generate Teams", command = gen_teams)
-show_results.grid(row=3, column=0)
+show_results = Button(frame6, text="Generate Teams", command = gen_teams)
+show_results.pack()
 
 btn2 = Button(frame4, text = 'Dummy Button')
-btn2.pack()
+btn2.pack(side = BOTTOM)
+
+A_winner_btn = Button(frame2, text="Team A won!", command=A_Won)
+A_winner_btn.pack(side = LEFT)
+
+B_winner_btn = Button(frame2, text="Team B won!", command=B_Won)
+B_winner_btn.pack(side = RIGHT)
+
+next_round_btn = Button(win, text="Next Round!", command=reset_all)
+next_round_btn.config(height=5)
+next_round_btn.grid(row=4, column=3)
 win.mainloop()
