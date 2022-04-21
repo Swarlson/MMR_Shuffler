@@ -2,6 +2,9 @@ import tkinter.messagebox
 from tkinter import *
 import csv
 import re
+
+def reset_all():
+    pass
 def gen_teams():
     teamA = []
     teamB = []
@@ -31,6 +34,8 @@ def gen_teams():
         scoreA += int(players_dict[member])
     for member in teamB:
         scoreB += int(players_dict[member])
+    scoreA = int(scoreA/5)
+    scoreB = int(scoreB/5)
     teamA_mmr.config(text=str(scoreA), width = 40)
     teamB_mmr.config(text=str(scoreB), width = 40)
     diff = scoreA - scoreB
@@ -158,6 +163,19 @@ def set_shuffled_off():
     status.config(bg="red", fg="white", text="Not Shuffled")
 def set_shuffled_on():
     status.config(bg="green", fg="white", text="Shuffled")
+
+def A_Won():
+    player11.config(bg="orange")
+    player12.config(bg="orange")
+    player13.config(bg="orange")
+    player14.config(bg="orange")
+    player15.config(bg="orange")
+def B_Won():
+    player21.config(bg="orange")
+    player22.config(bg="orange")
+    player23.config(bg="orange")
+    player24.config(bg="orange")
+    player25.config(bg="orange")
 #load csv
 filename = 'players.csv'
 players_dict = {}
@@ -178,10 +196,12 @@ win.title("MMR Shuffler")
 win.columnconfigure(0,minsize=250)
 
 frame1 = Frame(win) #Players
+frame2 = Frame(win) #Results
 frame3 = Frame(win) #Dropdown
 frame4 = Frame(win) #Buttons
 frame5 = Frame(win) #Proposed Teams
 frame6 = Frame(win) #StatusFrame
+
 
 
 frame5.columnconfigure(1,minsize=150)
@@ -193,6 +213,7 @@ frame1.grid(row=0, column=1)
 frame4.grid(row=1, column=0)
 frame5.grid(row=3, column=1)
 frame6.grid(row=3, column = 0, pady=20)
+frame2.grid(row=4, column=1)
 
 
 
@@ -205,7 +226,7 @@ status = Message(frame6, text = "Not Shuffled")
 status.config(bg="red", fg="white", width="300")
 status.pack()
 
-mmr_msg = Message(frame5, text ="Total MMR: ")
+mmr_msg = Message(frame5, text ="Average MMR: ")
 mmr_msg.config(bd=1, relief=RAISED)
 mmr_msg.grid(row=6, column=0)
 
@@ -315,12 +336,21 @@ shuffle_btn = Button(frame4, text = 'Average MMR Shuffle', command=average_shuff
 shuffle_btn.pack(side = BOTTOM)
 
 results_sb = Listbox(frame6)
-#results_sb.grid(row=2, column=0, pady = 50)
 results_sb.pack()
 
 show_results = Button(frame6, text="Generate Teams", command = gen_teams)
-#show_results.grid(row=3, column=0)
 show_results.pack()
+
 btn2 = Button(frame4, text = 'Dummy Button')
 btn2.pack(side = BOTTOM)
+
+A_winner_btn = Button(frame2, text="Team A won!", command=A_Won)
+A_winner_btn.pack(side = LEFT)
+
+B_winner_btn = Button(frame2, text="Team B won!", command=B_Won)
+B_winner_btn.pack(side = RIGHT)
+
+next_round_btn = Button(win, text="Next Round!", command=reset_all)
+next_round_btn.config(height=5)
+next_round_btn.grid(row=4, column=3)
 win.mainloop()
