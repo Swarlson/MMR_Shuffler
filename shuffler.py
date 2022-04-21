@@ -3,6 +3,18 @@ from tkinter import *
 import csv
 import re
 
+#globals
+
+global results
+results = {}
+global players_dict
+
+def update_team(player_msg, team):
+    i = 0
+    for p in player_msg:
+        p.config(text = team[i], width = 300, padx=30)
+        i+=1
+
 def reset_all():
     pass
 def gen_teams():
@@ -18,16 +30,8 @@ def gen_teams():
         teamA = results[id][0][0]
         teamB = results[id][0][1]
     #width so endloss fucky aber prevents wrapping i guess. Alt: Fixed length und max length names
-    player11.config(text = teamA[0], width = len(teamA[0])*8, anchor = "e")
-    player12.config(text = teamA[1], width = len(teamA[1])*8, anchor = "e")
-    player13.config(text = teamA[2], width = len(teamA[2])*8, anchor = "e")
-    player14.config(text = teamA[3], width = len(teamA[3])*8, anchor = "e")
-    player15.config(text = teamA[4], width = len(teamA[4])*8, anchor = "e")
-    player21.config(text = teamB[0], width = len(teamB[0])*8, anchor = "e")
-    player22.config(text = teamB[1], width = len(teamB[1])*8, anchor = "e")
-    player23.config(text = teamB[2], width = len(teamB[2])*8, anchor = "e")
-    player24.config(text = teamB[3], width = len(teamB[3])*8, anchor = "e")
-    player25.config(text = teamB[4], width = len(teamB[4])*8, anchor = "e")
+    update_team(teamA_players, teamA)
+    update_team(teamB_players, teamB)
     scoreA= 0
     scoreB= 0
     for member in teamA:
@@ -43,66 +47,54 @@ def gen_teams():
     mmr_diff.config(bg="red") if diff>0 else mmr_diff.config(bg="green")
 
 
-
+#würde auch in schleifen gehen aber brauchst halt 2 neue arrays dunno if worth im moment vll für reset später
 def fill_box(value):
     set_shuffled_off()
     p_value = value
     if not player0.get():
-        player0mmr.delete(0,END)
         player0.insert(0,p_value)
-        player0mmr.insert(0, players_dict[p_value])
+        player0mmr.config(text = players_dict[p_value])
         return
     if not player1.get():
-        player1mmr.delete(0,END)
         player1.insert(0,p_value)
-        player1mmr.insert(0, players_dict[p_value])
+        player1mmr.config(text = players_dict[p_value])
         return
     if not player2.get():
-        player2mmr.delete(0,END)
         player2.insert(0,p_value)
-        player2mmr.insert(0, players_dict[p_value])
+        player2mmr.config(text = players_dict[p_value])
         return
     if not player3.get():
-        player3mmr.delete(0,END)
         player3.insert(0,p_value)
-        player3mmr.insert(0, players_dict[p_value])
+        player3mmr.config(text = players_dict[p_value])
         return
     if not player4.get():
-        player4mmr.delete(0,END)
         player4.insert(0,p_value)
-        player4mmr.insert(0, players_dict[p_value])
+        player4mmr.config(text = players_dict[p_value])
         return
     if not player5.get():
-        player5mmr.delete(0,END)
         player5.insert(0,p_value)
-        player5mmr.insert(0, players_dict[p_value])
+        player5mmr.config(text = players_dict[p_value])
         return
     if not player6.get():
-        player6mmr.delete(0,END)
         player6.insert(0,p_value)
-        player6mmr.insert(0, players_dict[p_value])
+        player6mmr.config(text = players_dict[p_value])
         return
     if not player7.get():
-        player7mmr.delete(0,END)
         player7.insert(0,p_value)
-        player7mmr.insert(0, players_dict[p_value])
+        player7mmr.config(text = players_dict[p_value])
         return
     if not player8.get():
-        player8mmr.delete(0,END)
         player8.insert(0,p_value)
-        player8mmr.insert(0, players_dict[p_value])
+        player8mmr.config(text = players_dict[p_value])
         return
     if not player9.get():
-        player9mmr.delete(0,END)
         player9.insert(0,p_value)
-        player9mmr.insert(0, players_dict[p_value])
+        player9mmr.config(text = players_dict[p_value])
         return
     tkinter.messagebox.showinfo('Error', 'There are already 10 active players selected')
 
 def average_shuffle():
     active_players = [player0.get(), player1.get(), player2.get(), player3.get(), player4.get(), player5.get(), player6.get(), player7.get(), player8.get(), player9.get()]
-    global results
-    results = {}
     teamA = []
     teamB_roster = []
     teamA.append(active_players[0])
@@ -165,28 +157,24 @@ def set_shuffled_on():
     status.config(bg="green", fg="white", text="Shuffled")
 
 def A_Won():
-    player11.config(bg="orange")
-    player12.config(bg="orange")
-    player13.config(bg="orange")
-    player14.config(bg="orange")
-    player15.config(bg="orange")
+    for p in teamA_players:
+        p.config(bg="orange")
+
 def B_Won():
-    player21.config(bg="orange")
-    player22.config(bg="orange")
-    player23.config(bg="orange")
-    player24.config(bg="orange")
-    player25.config(bg="orange")
+    for p in teamB_players:
+        p.config(bg="orange")
 #load csv
-filename = 'players.csv'
-players_dict = {}
-with open(filename, mode ='r')as file:
-  csvFile = csv.DictReader(file)
+def load_db():
+    filename = 'players.csv'
+    players_dict = {}
+    with open(filename, mode ='r') as file:
+        csvFile = csv.DictReader(file)
+        for lines in csvFile:
+                players_dict[lines['Alias']] = lines['MMR']
+    PLAYERS = list(players_dict.keys())
+    return PLAYERS, players_dict
 
-  for lines in csvFile:
-        players_dict[lines['Alias']] = lines['MMR']
-
-PLAYERS = list(players_dict.keys())
-
+PLAYERS,players_dict = load_db()
 #create window
 win = tkinter.Tk()
 Rwidth = 800
@@ -255,22 +243,24 @@ player12 = Message(frame5)
 player13 = Message(frame5)
 player14 = Message(frame5)
 player15 = Message(frame5)
+
+teamA_players = [player11, player12, player13, player14, player15]
+i = 0
+for p in teamA_players:
+    i += 1
+    p.grid(row = i, column = 1)
+
 player21 = Message(frame5)
 player22 = Message(frame5)
 player23 = Message(frame5)
 player24 = Message(frame5)
 player25 = Message(frame5)
 
-player11.grid(row=1, column=1)
-player12.grid(row=2, column=1)
-player13.grid(row=3, column=1)
-player14.grid(row=4, column=1)
-player15.grid(row=5, column=1)
-player21.grid(row=1, column=3)
-player22.grid(row=2, column=3)
-player23.grid(row=3, column=3)
-player24.grid(row=4, column=3)
-player25.grid(row=5, column=3)
+teamB_players = [player21, player22, player23, player24, player25]
+i = 0
+for p in teamB_players:
+    i += 1
+    p.grid(row = i, column = 3)
 
 
 Label(frame3,text="Add player: ").grid(row=0, column=1, columnspan=2)
@@ -287,16 +277,16 @@ player7 = Entry(frame1)
 player8 = Entry(frame1)
 player9 = Entry(frame1)
 
-player0mmr = Entry(frame1)
-player1mmr = Entry(frame1)
-player2mmr = Entry(frame1)
-player3mmr = Entry(frame1)
-player4mmr = Entry(frame1)
-player5mmr = Entry(frame1)
-player6mmr = Entry(frame1)
-player7mmr = Entry(frame1)
-player8mmr = Entry(frame1)
-player9mmr = Entry(frame1)
+player0mmr = Message(frame1)
+player1mmr = Message(frame1)
+player2mmr = Message(frame1)
+player3mmr = Message(frame1)
+player4mmr = Message(frame1)
+player5mmr = Message(frame1)
+player6mmr = Message(frame1)
+player7mmr = Message(frame1)
+player8mmr = Message(frame1)
+player9mmr = Message(frame1)
 
 Label(frame1,text='Player1  ').grid(row=0)
 Label(frame1,text='Player2  ').grid(row=1)
@@ -354,3 +344,7 @@ next_round_btn = Button(win, text="Next Round!", command=reset_all)
 next_round_btn.config(height=5)
 next_round_btn.grid(row=4, column=3)
 win.mainloop()
+
+#TODO: 1. Reset funktionen machen (Clear: TeamA/TeamB, Unshuffle, Avr MMR/dif, Shuffle liste links, reload DB)
+#      2. Wenn player felder geupdated werden: => Unshuffle, UpdateMMR(wie validation), Remove player aus liste links
+#      3. Win Buttons sollten DB updaten (und evtl visuell oben darstellen)
