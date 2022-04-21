@@ -7,6 +7,7 @@ import re
 
 global results
 global players_dict
+global PLAYERS
 
 def update_team(player_msg, team):
     i = 0
