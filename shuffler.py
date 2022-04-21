@@ -7,7 +7,6 @@ import re
 
 global results
 global players_dict
-global PLAYERS
 
 def update_team(player_msg, team):
     i = 0
@@ -170,11 +169,12 @@ def load_db():
     players_dict = {}
     with open(filename, mode ='r')as file:
         csvFile = csv.DictReader(file)
-    for lines in csvFile:
-            players_dict[lines['Alias']] = lines['MMR']
+        for lines in csvFile:
+                players_dict[lines['Alias']] = lines['MMR']
     PLAYERS = list(players_dict.keys())
+    return PLAYERS
 
-load_db()
+PLAYERS = load_db()
 #create window
 win = tkinter.Tk()
 Rwidth = 800
