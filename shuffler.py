@@ -167,7 +167,7 @@ def B_Won():
 def load_db():
     filename = 'players.csv'
     players_dict = {}
-    with open(filename, mode ='r')as file:
+    with open(filename, mode ='r') as file:
         csvFile = csv.DictReader(file)
         for lines in csvFile:
                 players_dict[lines['Alias']] = lines['MMR']
