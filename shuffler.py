@@ -9,6 +9,26 @@ global results
 results = {}
 global players_dict
 
+def fill_selection(event):
+    p_search_entry.delete(0,END)
+    p_search_entry.insert(0,p_search_list.get(p_search_list.curselection()))
+
+def Scankey(event):
+    val = event.widget.get()
+    if val =='':
+        data = PLAYERS
+    else:
+        data = []
+        for itm in PLAYERS:
+            if val.lower() in itm.lower():
+                data.append(itm)
+    Update_search_list(data)
+
+def Update_search_list(data):
+    p_search_list.delete(0,END)
+    for itm in data:
+        p_search_list.insert(END,itm)
+
 def update_team(player_msg, team):
     i = 0
     for p in player_msg:
@@ -48,9 +68,19 @@ def gen_teams():
 
 
 #würde auch in schleifen gehen aber brauchst halt 2 neue arrays dunno if worth im moment vll für reset später
-def fill_box(value):
+def add_player_enter(value):
+    p_value = value.widget.get()
+    fill_box(p_value)
+
+def add_player_button():
+    p_value = p_search_entry.get()
+    fill_box(p_value)
+
+def fill_box(p_value):
+    if p_value not in PLAYERS:
+        tkinter.messagebox.showinfo('Error', '%s does not exist' % (p_value))
+        return
     set_shuffled_off()
-    p_value = value
     if not player0.get():
         player0.insert(0,p_value)
         player0mmr.config(text = players_dict[p_value])
@@ -204,11 +234,25 @@ frame6.grid(row=3, column = 0, pady=20)
 frame2.grid(row=4, column=1)
 
 
-
+""""
 p0 = StringVar(frame3)
 p0.set("Choose Player")
 w0 = OptionMenu(frame3, p0, *PLAYERS, command=fill_box)
 w0.grid(row=0, column=3)
+"""
+
+p_search_entry = Entry(frame3)
+p_search_entry.grid(row=0, column=1)
+p_search_entry.bind('<KeyRelease>', Scankey)
+p_search_entry.bind('<Return>',add_player_enter)
+
+p_search_list = Listbox(frame3)
+p_search_list.grid(row=1, column=1)
+p_search_list.bind("<<ListboxSelect>>", fill_selection)
+Update_search_list(PLAYERS)
+
+add_player_btn = Button(frame3, text = ">>>>>", command=add_player_button)
+add_player_btn.grid(row=1, column=2)
 
 status = Message(frame6, text = "Not Shuffled")
 status.config(bg="red", fg="white", width="300")
@@ -261,9 +305,6 @@ i = 0
 for p in teamB_players:
     i += 1
     p.grid(row = i, column = 3)
-
-
-Label(frame3,text="Add player: ").grid(row=0, column=1, columnspan=2)
 
 
 player0 = Entry(frame1)
@@ -321,6 +362,9 @@ player6mmr.grid(row=6, column=2)
 player7mmr.grid(row=7, column=2)
 player8mmr.grid(row=8, column=2)
 player9mmr.grid(row=9, column=2)
+
+
+Label(frame3,text="Add player: ").grid(row=0, column=0)
 
 shuffle_btn = Button(frame4, text = 'Average MMR Shuffle', command=average_shuffle)
 shuffle_btn.pack(side = BOTTOM)
