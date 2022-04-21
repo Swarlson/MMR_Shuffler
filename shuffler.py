@@ -3,6 +3,11 @@ from tkinter import *
 import csv
 import re
 
+#globals
+
+global results
+global players_dict
+
 def update_team(player_msg, team):
     i = 0
     for p in player_msg:
@@ -89,7 +94,6 @@ def fill_box(value):
 
 def average_shuffle():
     active_players = [player0.get(), player1.get(), player2.get(), player3.get(), player4.get(), player5.get(), player6.get(), player7.get(), player8.get(), player9.get()]
-    global results
     results = {}
     teamA = []
     teamB_roster = []
