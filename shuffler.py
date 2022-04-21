@@ -32,7 +32,7 @@ def Update_search_list(data):
 def update_team(player_msg, team):
     i = 0
     for p in player_msg:
-        p.config(text = team[i], width = 300, padx=30)
+        p.config(text = team[i], width = 104, padx=50)
         i+=1
 
 def reset_all():
@@ -52,8 +52,8 @@ def gen_teams():
     #width so endloss fucky aber prevents wrapping i guess. Alt: Fixed length und max length names
     update_team(teamA_players, teamA)
     update_team(teamB_players, teamB)
-    scoreA= 0
-    scoreB= 0
+    scoreA = 0
+    scoreB = 0
     for member in teamA:
         scoreA += int(players_dict[member])
     for member in teamB:
@@ -81,50 +81,16 @@ def fill_box(p_value):
         tkinter.messagebox.showinfo('Error', '%s does not exist' % (p_value))
         return
     set_shuffled_off()
-    if not player0.get():
-        player0.insert(0,p_value)
-        player0mmr.config(text = players_dict[p_value])
-        return
-    if not player1.get():
-        player1.insert(0,p_value)
-        player1mmr.config(text = players_dict[p_value])
-        return
-    if not player2.get():
-        player2.insert(0,p_value)
-        player2mmr.config(text = players_dict[p_value])
-        return
-    if not player3.get():
-        player3.insert(0,p_value)
-        player3mmr.config(text = players_dict[p_value])
-        return
-    if not player4.get():
-        player4.insert(0,p_value)
-        player4mmr.config(text = players_dict[p_value])
-        return
-    if not player5.get():
-        player5.insert(0,p_value)
-        player5mmr.config(text = players_dict[p_value])
-        return
-    if not player6.get():
-        player6.insert(0,p_value)
-        player6mmr.config(text = players_dict[p_value])
-        return
-    if not player7.get():
-        player7.insert(0,p_value)
-        player7mmr.config(text = players_dict[p_value])
-        return
-    if not player8.get():
-        player8.insert(0,p_value)
-        player8mmr.config(text = players_dict[p_value])
-        return
-    if not player9.get():
-        player9.insert(0,p_value)
-        player9mmr.config(text = players_dict[p_value])
-        return
+    for p, pmmr in zip(player_msg_list, player_mmr_list):
+        if not p.cget("text"):
+            p.config(text = p_value)
+            pmmr.config(text = players_dict[p_value])
+            return
+
     tkinter.messagebox.showinfo('Error', 'There are already 10 active players selected')
 
 def average_shuffle():
-    active_players = [player0.get(), player1.get(), player2.get(), player3.get(), player4.get(), player5.get(), player6.get(), player7.get(), player8.get(), player9.get()]
+    active_players = [player0.cget("text"), player1.cget("text"), player2.cget("text"), player3.cget("text"), player4.cget("text"), player5.cget("text"), player6.cget("text"), player7.cget("text"), player8.cget("text"), player9.cget("text")]
     teamA = []
     teamB_roster = []
     teamA.append(active_players[0])
@@ -233,14 +199,6 @@ frame5.grid(row=3, column=1)
 frame6.grid(row=3, column = 0, pady=20)
 frame2.grid(row=4, column=1)
 
-
-""""
-p0 = StringVar(frame3)
-p0.set("Choose Player")
-w0 = OptionMenu(frame3, p0, *PLAYERS, command=fill_box)
-w0.grid(row=0, column=3)
-"""
-
 p_search_entry = Entry(frame3)
 p_search_entry.grid(row=0, column=1)
 p_search_entry.bind('<KeyRelease>', Scankey)
@@ -279,7 +237,6 @@ teamB_mmr.config(bg="green", fg="white", width="300")
 teamB_mmr.grid(row=6, column=3)
 
 mmr_diff = Message(frame5,text="Diff")
-#mmr_diff.config(bg="green", fg="white", width="300")
 mmr_diff.grid(row=6, column=2)
 
 player11 = Message(frame5)
@@ -307,16 +264,21 @@ for p in teamB_players:
     p.grid(row = i, column = 3)
 
 
-player0 = Entry(frame1)
-player1 = Entry(frame1)
-player2 = Entry(frame1)
-player3 = Entry(frame1)
-player4 = Entry(frame1)
-player5 = Entry(frame1)
-player6 = Entry(frame1)
-player7 = Entry(frame1)
-player8 = Entry(frame1)
-player9 = Entry(frame1)
+player0 = Message(frame1)
+player1 = Message(frame1)
+player2 = Message(frame1)
+player3 = Message(frame1)
+player4 = Message(frame1)
+player5 = Message(frame1)
+player6 = Message(frame1)
+player7 = Message(frame1)
+player8 = Message(frame1)
+player9 = Message(frame1)
+
+player_msg_list = [player0, player1, player2, player3, player4, player5, player6, player7, player8, player9]
+for p in player_msg_list:
+    p.config(width=104)
+
 
 player0mmr = Message(frame1)
 player1mmr = Message(frame1)
@@ -328,6 +290,12 @@ player6mmr = Message(frame1)
 player7mmr = Message(frame1)
 player8mmr = Message(frame1)
 player9mmr = Message(frame1)
+
+player_mmr_list = [player0mmr, player1mmr, player2mmr, player3mmr, player4mmr, player5mmr, player6mmr, player7mmr
+                    ,player8mmr, player9mmr]
+
+for p in player_mmr_list:
+    p.config(width=80)
 
 Label(frame1,text='Player1  ').grid(row=0)
 Label(frame1,text='Player2  ').grid(row=1)
